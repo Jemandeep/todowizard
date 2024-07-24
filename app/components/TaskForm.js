@@ -1,14 +1,21 @@
 import { useState } from 'react';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
-const TaskForm = ({ addTask }) => {
+const TaskForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addTask({ title, description });
-    setTitle('');
-    setDescription('');
+    const task = { title, description, completed: false };
+    try {
+      await addDoc(collection(db, 'tasks'), task);
+      setTitle('');
+      setDescription('');
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   return (
