@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { collection, query, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase/firebaseConfig'; 
+import { db } from '../firebase/firebaseConfig';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
 import { AuthProvider } from '../auth/AuthContext';
@@ -36,7 +36,7 @@ const Home = () => {
       <ProtectedRoute>
         <div className="container p-4">
           <div className="text-center mb-4">
-            <img src="/ToDoTitle.png" alt="TodoWizard Title" className="mx-auto w-48 h-auto" />
+            <img src="/ToDoTitle.png" alt="TodoWizard Title" className="mx-auto w-48 h-auto"/>
           </div>
           <TaskForm />
           <div className="flex">
