@@ -36,7 +36,7 @@ const Home = () => {
       <ProtectedRoute>
         <div className="container p-4">
           <div className="text-center mb-4">
-            <img src="/ToDoTitle.png" alt="TodoWizard Title" className="mx-auto w-48 h-auto"/>
+            <img src="/ToDoTitle.png" alt="TodoWizard Title" className="mx-auto w-48 h-auto" />
           </div>
           <TaskForm />
           <div className="flex">
