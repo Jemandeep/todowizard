@@ -7,13 +7,14 @@ const ProtectedRoute = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
+    if (user === undefined) return; // Wait until the user state is determined
     if (!user) {
-      router.push('/login');
+      router.push('/login'); // Redirect to login page if user is not authenticated
     }
   }, [user, router]);
 
   if (!user) {
-    return null;
+    return null; // Render nothing until the user state is determined
   }
 
   return children;

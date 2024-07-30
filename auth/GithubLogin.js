@@ -1,21 +1,14 @@
+"use client";
+import { useEffect } from 'react';
 import { auth } from '../firebase/firebaseConfig';
-import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+import { GithubAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 
 const GithubLogin = () => {
+  const router = useRouter(); // Initialize the router
+
   const handleGithubLogin = async () => {
     const provider = new GithubAuthProvider();
-    if (process.env.NODE_ENV === 'development') {
-      provider.setCustomParameters({
-        client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID_LOCAL,
-        redirect_uri: 'http://localhost:3000/auth/callback', // Ensure this matches the registered callback URL
-      });
-    } else {
-      provider.setCustomParameters({
-        client_id: process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID_PRODUCTION,
-        redirect_uri: 'https://your-vercel-app.vercel.app/auth/callback', // Ensure this matches the registered callback URL
-      });
-    }
-
     try {
       await signInWithPopup(auth, provider);
       console.log("GitHub authentication successful!");
@@ -23,6 +16,18 @@ const GithubLogin = () => {
       console.error("Error during GitHub sign-in:", error);
     }
   };
+
+  useEffect(() => {
+    // Listen for auth state changes and redirect on sign-in
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push('/'); // Redirect to the main page on successful sign-in
+      }
+    });
+
+    // Cleanup the subscription on unmount
+    return () => unsubscribe();
+  }, [router]);
 
   return (
     <button
