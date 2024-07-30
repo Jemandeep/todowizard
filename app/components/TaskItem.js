@@ -1,11 +1,12 @@
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { db } from '../../firebase/firebaseConfig';
 
 const TaskItem = ({ task }) => {
   const completeTask = async () => {
     const taskRef = doc(db, 'tasks', task.id);
     try {
       await updateDoc(taskRef, { completed: true });
+      console.log("Task marked as completed: ", task.id);
     } catch (e) {
       console.error("Error updating document: ", e);
     }
@@ -15,6 +16,7 @@ const TaskItem = ({ task }) => {
     const taskRef = doc(db, 'tasks', task.id);
     try {
       await updateDoc(taskRef, { completed: false });
+      console.log("Task marked as incomplete: ", task.id);
     } catch (e) {
       console.error("Error updating document: ", e);
     }
@@ -24,6 +26,7 @@ const TaskItem = ({ task }) => {
     const taskRef = doc(db, 'tasks', task.id);
     try {
       await deleteDoc(taskRef);
+      console.log("Task deleted: ", task.id);
     } catch (e) {
       console.error("Error deleting document: ", e);
     }

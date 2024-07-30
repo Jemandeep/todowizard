@@ -1,8 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore"; 
-import { getAnalytics } from "firebase/analytics";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDvtBy0Vxzq2TdEev1juy_JUlItkqr2AGg",
   authDomain: "todowizard-d06ad.firebaseapp.com",
@@ -15,7 +14,18 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const db = getFirestore(app); // Initialize Firestore
+const db = getFirestore(app);
+
+console.log("Firebase has been initialized successfully.");
+
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  isSupported().then((supported) => {
+    if (supported) {
+      getAnalytics(app);
+    }
+  }).catch((error) => {
+    console.error("Error checking Analytics support: ", error);
+  });
+}
 
 export { db };
