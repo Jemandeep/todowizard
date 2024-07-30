@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth"; // Import Firebase Auth
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
@@ -15,6 +16,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app); // Initialize Firebase Auth
 
 console.log("Firebase has been initialized successfully.");
 
@@ -28,4 +30,4 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   });
 }
 
-export { db };
+export { db, auth };
