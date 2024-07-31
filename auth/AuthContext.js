@@ -11,6 +11,7 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+        localStorage.setItem('guest', 'false'); // Clear guest login on auth change
       } else {
         setUser(null);
       }
@@ -18,7 +19,10 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  const logout = () => signOut(auth);
+  const logout = () => {
+    signOut(auth);
+    localStorage.setItem('guest', 'false'); // Clear guest login on logout
+  };
 
   return (
     <AuthContext.Provider value={{ user, logout }}>

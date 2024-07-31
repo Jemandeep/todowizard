@@ -5,15 +5,24 @@ import { useEffect } from 'react';
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
   const router = useRouter();
+  const [isGuest, setIsGuest] = useState(false); // Add state for guest user
 
   useEffect(() => {
-    if (user === undefined) return; // Wait until the user state is determined
-    if (!user) {
+    // Check if the user is a guest
+    const guest = localStorage.getItem('guest');
+    if (guest === 'true') {
+      setIsGuest(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user === undefined && !isGuest) return; // Wait until the user state is determined
+    if (!user && !isGuest) {
       router.push('/login'); // Redirect to login page if user is not authenticated
     }
-  }, [user, router]);
+  }, [user, isGuest, router]);
 
-  if (!user) {
+  if (!user && !isGuest) {
     return null; // Render nothing until the user state is determined
   }
 

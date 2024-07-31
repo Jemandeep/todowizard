@@ -10,6 +10,7 @@ const GithubLogin = () => {
   const handleGithubLogin = async () => {
     const provider = new GithubAuthProvider();
     try {
+      console.log("Starting GitHub authentication...");
       await signInWithPopup(auth, provider);
       console.log("GitHub authentication successful!");
     } catch (error) {
@@ -21,6 +22,7 @@ const GithubLogin = () => {
     // Listen for auth state changes and redirect on sign-in
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log("User signed in: ", user);
         router.push('/'); // Redirect to the main page on successful sign-in
       }
     });
