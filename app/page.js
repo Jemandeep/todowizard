@@ -5,12 +5,14 @@ import { collection, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
-import { AuthProvider } from '../auth/AuthContext';
+import { useAuth,AuthProvider } from '../auth/AuthContext';
 import ProtectedRoute from '../auth/ProtectedRoute';
+import LogoutButton from './components/LogoutButton';
 
-const Home = () => {
+const HomeContent = () => {
   const [incompleteTasks, setIncompleteTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const q = query(collection(db, 'tasks'));
@@ -32,25 +34,34 @@ const Home = () => {
   }, []);
 
   return (
-    <AuthProvider>
-      <ProtectedRoute>
-        <div className="container p-4">
-          <div className="text-center mb-4">
-            <img src="/ToDoTitle.png" alt="TodoWizard Title" className="mx-auto w-48 h-auto" />
+    <ProtectedRoute>
+      <div className="container p-4">
+        <div className="text-center mb-4">
+          <img src="/ToDoTitle.png" alt="TodoWizard Title" className="mx-auto w-48 h-auto" />
+        </div>
+        <div className="flex justify-end mb-4">
+          <LogoutButton />
+        </div>
+        <TaskForm />
+        <div className="flex">
+          <div className="w-1/2">
+            <h2 className="text-2xl font-bold mb-2">Incomplete Tasks</h2>
+            <TaskList tasks={incompleteTasks} />
           </div>
-          <TaskForm />
-          <div className="flex">
-            <div className="w-1/2">
-              <h2 className="text-2xl font-bold mb-2">Incomplete Tasks</h2>
-              <TaskList tasks={incompleteTasks} />
-            </div>
-            <div className="w-1/2">
-              <h2 className="text-2xl font-bold mb-2">Completed Tasks</h2>
-              <TaskList tasks={completedTasks} />
-            </div>
+          <div className="w-1/2">
+            <h2 className="text-2xl font-bold mb-2">Completed Tasks</h2>
+            <TaskList tasks={completedTasks} />
           </div>
         </div>
-      </ProtectedRoute>
+      </div>
+    </ProtectedRoute>
+  );
+};
+
+const Home = () => {
+  return (
+    <AuthProvider>
+      <HomeContent />
     </AuthProvider>
   );
 };
