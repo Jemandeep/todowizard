@@ -12,7 +12,7 @@ import LogoutButton from './components/LogoutButton';
 const HomeContent = () => {
   const [incompleteTasks, setIncompleteTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
-  const { user, logout } = useAuth();
+  const { user, loading } = useAuth(); // Get the user and loading state from the Auth context
 
   useEffect(() => {
     const q = query(collection(db, 'tasks'));
@@ -33,6 +33,10 @@ const HomeContent = () => {
     return () => unsubscribe();
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <ProtectedRoute>
       <div className="container p-4">
@@ -40,6 +44,11 @@ const HomeContent = () => {
           <img src="/ToDoTitle.png" alt="TodoWizard Title" className="mx-auto w-48 h-auto" />
         </div>
         <div className="flex justify-end mb-4">
+          {user && (
+            <p className="text-lg font-semibold mr-4">
+              Logged in as {user.type === 'github' ? user.name : 'Guest'}
+            </p>
+          )}
           <LogoutButton />
         </div>
         <TaskForm />
