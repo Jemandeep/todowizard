@@ -2,20 +2,11 @@
 import { useRouter } from 'next/navigation';
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../firebase/firebaseConfig';
-import { AuthProvider,useAuth } from '../../auth/AuthContext';
+import { AuthProvider, useAuth } from '../../auth/AuthContext';
 
 const LoginContent = () => {
   const router = useRouter();
-
-  const handleGithubLogin = async () => {
-    const provider = new GithubAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      router.push('/');
-    } catch (error) {
-      console.error("Error during GitHub sign-in:", error);
-    }
-  };
+  const { handleGithubLogin } = useAuth();
 
   const handleGuestLogin = () => {
     localStorage.setItem('guest', 'true'); // Set the local storage item for guest login
