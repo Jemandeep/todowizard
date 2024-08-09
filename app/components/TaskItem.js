@@ -1,9 +1,14 @@
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
+import { useAuth } from '../../auth/AuthContext';
 
 const TaskItem = ({ task }) => {
+  const { user } = useAuth();
+
   const completeTask = async () => {
-    const taskRef = doc(db, 'tasks', task.id);
+    const taskRef = user && user.type === 'guest' 
+      ? doc(db, 'guestTasks', task.id) 
+      : doc(db, 'users', user.uid, 'tasks', task.id);
     try {
       await updateDoc(taskRef, { completed: true });
       console.log("Task marked as completed: ", task.id);
@@ -13,7 +18,9 @@ const TaskItem = ({ task }) => {
   };
 
   const revertTask = async () => {
-    const taskRef = doc(db, 'tasks', task.id);
+    const taskRef = user && user.type === 'guest' 
+      ? doc(db, 'guestTasks', task.id) 
+      : doc(db, 'users', user.uid, 'tasks', task.id);
     try {
       await updateDoc(taskRef, { completed: false });
       console.log("Task marked as incomplete: ", task.id);
@@ -23,7 +30,9 @@ const TaskItem = ({ task }) => {
   };
 
   const deleteTask = async () => {
-    const taskRef = doc(db, 'tasks', task.id);
+    const taskRef = user && user.type === 'guest' 
+      ? doc(db, 'guestTasks', task.id) 
+      : doc(db, 'users', user.uid, 'tasks', task.id);
     try {
       await deleteDoc(taskRef);
       console.log("Task deleted: ", task.id);

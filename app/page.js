@@ -1,37 +1,16 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { collection, query, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase/firebaseConfig';
+import { useState } from 'react';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
-import { useAuth,AuthProvider } from '../auth/AuthContext';
 import ProtectedRoute from '../auth/ProtectedRoute';
 import LogoutButton from './components/LogoutButton';
+import { AuthProvider, useAuth } from '../auth/AuthContext';
 
 const HomeContent = () => {
   const [incompleteTasks, setIncompleteTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
-  const { user, loading } = useAuth(); // Get the user and loading state from the Auth context
-
-  useEffect(() => {
-    const q = query(collection(db, 'tasks'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const incomplete = [];
-      const complete = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.completed) {
-          complete.push({ id: doc.id, ...data });
-        } else {
-          incomplete.push({ id: doc.id, ...data });
-        }
-      });
-      setIncompleteTasks(incomplete);
-      setCompletedTasks(complete);
-    });
-    return () => unsubscribe();
-  }, []);
+  const { user, loading } = useAuth();
 
   if (loading) {
     return <div>Loading...</div>;
@@ -55,11 +34,11 @@ const HomeContent = () => {
         <div className="flex">
           <div className="w-1/2">
             <h2 className="text-2xl font-bold mb-2">Incomplete Tasks</h2>
-            <TaskList tasks={incompleteTasks} />
+            <TaskList tasks={incompleteTasks} setTasks={setIncompleteTasks} />
           </div>
           <div className="w-1/2">
             <h2 className="text-2xl font-bold mb-2">Completed Tasks</h2>
-            <TaskList tasks={completedTasks} />
+            <TaskList tasks={completedTasks} setTasks={setCompletedTasks} />
           </div>
         </div>
       </div>

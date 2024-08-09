@@ -1,17 +1,26 @@
 import { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebaseConfig';
+import { useAuth } from '../../auth/AuthContext';
 
 const TaskForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const task = { title, description, completed: false };
+
     try {
-      const docRef = await addDoc(collection(db, 'tasks'), task);
-      console.log("Document written with ID: ", docRef.id);
+      if (user && user.type === 'guest') {
+        // Add task to guestTasks collection
+        await addDoc(collection(db, 'guestTasks'), task);
+      } else if (user) {
+        // Add task to user-specific tasks collection
+        await addDoc(collection(db, 'users', user.uid, 'tasks'), task);
+      }
+
       setTitle('');
       setDescription('');
     } catch (e) {
