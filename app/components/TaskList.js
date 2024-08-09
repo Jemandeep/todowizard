@@ -8,6 +8,8 @@ const TaskList = ({ tasks, setTasks }) => {
   const { user } = useAuth();
 
   useEffect(() => {
+    console.log("User in TaskList useEffect:", user);
+
     let unsubscribe;
     if (user && user.type === 'guest') {
       const q = query(collection(db, 'guestTasks'));
@@ -16,6 +18,7 @@ const TaskList = ({ tasks, setTasks }) => {
         querySnapshot.forEach((doc) => {
           tasksData.push({ id: doc.id, ...doc.data() });
         });
+        console.log("Guest tasks data:", tasksData);
         setTasks(tasksData);
       });
     } else if (user) {
@@ -25,6 +28,7 @@ const TaskList = ({ tasks, setTasks }) => {
         querySnapshot.forEach((doc) => {
           tasksData.push({ id: doc.id, ...doc.data() });
         });
+        console.log("User tasks data:", tasksData);
         setTasks(tasksData);
       });
     }
@@ -36,9 +40,11 @@ const TaskList = ({ tasks, setTasks }) => {
     };
   }, [user, setTasks]);
 
+  console.log("Tasks in TaskList:", tasks);
+
   return (
     <div>
-      {tasks.map((task) => (
+      {tasks && tasks.map((task) => (
         <TaskItem key={task.id} task={task} />
       ))}
     </div>

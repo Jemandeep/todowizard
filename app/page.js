@@ -15,6 +15,8 @@ const HomeContent = () => {
   const { user, loading } = useAuth();
 
   useEffect(() => {
+    console.log("User in useEffect:", user);
+
     let unsubscribe;
     if (user && user.type === 'guest') {
       const q = query(collection(db, 'guestTasks'));
@@ -23,6 +25,7 @@ const HomeContent = () => {
         const complete = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          console.log("Guest task data:", data);
           if (data.completed) {
             complete.push({ id: doc.id, ...data });
           } else {
@@ -39,6 +42,7 @@ const HomeContent = () => {
         const complete = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          console.log("User task data:", data);
           if (data.completed) {
             complete.push({ id: doc.id, ...data });
           } else {

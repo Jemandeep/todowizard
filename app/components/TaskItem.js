@@ -5,6 +5,8 @@ import { useAuth } from '../../auth/AuthContext';
 const TaskItem = ({ task }) => {
   const { user } = useAuth();
 
+  console.log("Rendering TaskItem:", task);
+
   const completeTask = async () => {
     const taskRef = user && user.type === 'guest' 
       ? doc(db, 'guestTasks', task.id) 
