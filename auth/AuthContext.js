@@ -1,17 +1,19 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase/firebaseConfig';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser({ uid: user.uid, email: user.email, name: user.displayName, type: 'github' });
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser({ uid: firebaseUser.uid, email: firebaseUser.email, name: firebaseUser.displayName, type: 'github' });
       } else {
         const isGuest = localStorage.getItem('guest') === 'true';
         if (isGuest) {
@@ -30,6 +32,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('guest');
     await signOut(auth);
     setUser(null);
+    router.push('/login');
   };
 
   return (
