@@ -1,16 +1,61 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
 import ProtectedRoute from '../auth/ProtectedRoute';
 import LogoutButton from './components/LogoutButton';
 import { AuthProvider, useAuth } from '../auth/AuthContext';
+import { collection, query, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
 
 const HomeContent = () => {
   const [incompleteTasks, setIncompleteTasks] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);
   const { user, loading } = useAuth();
+
+  useEffect(() => {
+    let unsubscribe;
+    if (user && user.type === 'guest') {
+      const q = query(collection(db, 'guestTasks'));
+      unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const incomplete = [];
+        const complete = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.completed) {
+            complete.push({ id: doc.id, ...data });
+          } else {
+            incomplete.push({ id: doc.id, ...data });
+          }
+        });
+        setIncompleteTasks(incomplete);
+        setCompletedTasks(complete);
+      });
+    } else if (user) {
+      const q = query(collection(db, 'users', user.uid, 'tasks'));
+      unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const incomplete = [];
+        const complete = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.completed) {
+            complete.push({ id: doc.id, ...data });
+          } else {
+            incomplete.push({ id: doc.id, ...data });
+          }
+        });
+        setIncompleteTasks(incomplete);
+        setCompletedTasks(complete);
+      });
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [user]);
 
   if (loading) {
     return <div>Loading...</div>;

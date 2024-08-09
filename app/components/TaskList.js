@@ -10,7 +10,6 @@ const TaskList = ({ tasks, setTasks }) => {
   useEffect(() => {
     let unsubscribe;
     if (user && user.type === 'guest') {
-      // Fetch tasks from guestTasks collection
       const q = query(collection(db, 'guestTasks'));
       unsubscribe = onSnapshot(q, (querySnapshot) => {
         const tasksData = [];
@@ -20,7 +19,6 @@ const TaskList = ({ tasks, setTasks }) => {
         setTasks(tasksData);
       });
     } else if (user) {
-      // Fetch tasks from user-specific tasks collection
       const q = query(collection(db, 'users', user.uid, 'tasks'));
       unsubscribe = onSnapshot(q, (querySnapshot) => {
         const tasksData = [];
