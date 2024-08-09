@@ -12,6 +12,16 @@ body {
   box-sizing: border-box;
 }
 
+.login-background {
+  background-image: url('/LoginBg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .container {
   @apply max-w-4xl mx-auto;
 }

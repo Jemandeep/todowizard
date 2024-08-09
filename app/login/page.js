@@ -24,8 +24,8 @@ const LoginContent = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 bg-cover bg-center" style={{ backgroundImage: "url('/LoginBg.jpg')" }}>
-      <div className="bg-white p-8 rounded shadow-md text-center w-80 bg-opacity-80">
+    <div className="flex items-center justify-center min-h-screen bg-login">
+      <div className="bg-white bg-opacity-90 p-8 rounded shadow-md text-center w-80">
         <h2 className="text-2xl font-bold mb-4">Login</h2>
         <div className="flex flex-col items-center space-y-4">
           <button
