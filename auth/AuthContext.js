@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from '../firebase/firebaseConfig'; 
-import { onAuthStateChanged, signOut,GithubAuthProvider } from 'firebase/auth';
+import { onAuthStateChanged, signOut,GithubAuthProvider ,signInWithPopup} from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
@@ -8,7 +8,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -33,7 +33,8 @@ export function AuthProvider({ children }) {
     const provider = new GithubAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/'); // Redirect to the home page after successful login
+      console.log('Sign-in successful');
+      router.push('/');
     } catch (error) {
       console.error("Error during GitHub sign-in:", error);
     }
@@ -45,7 +46,7 @@ export function AuthProvider({ children }) {
     }
     localStorage.removeItem('guest');
     setUser(null);
-    router.push('/login'); // Redirect to login page
+    router.push('/login');
   };
 
   return (
