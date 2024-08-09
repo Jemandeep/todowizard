@@ -74,7 +74,7 @@ const HomeContent = () => {
         <div className="flex justify-end mb-4">
           {user && (
             <p className="text-lg font-semibold mr-4">
-              Logged in as {user.type === 'github' ? user.name : 'Guest'}
+              Logged in as {user.type === 'github' ? (user.name || 'GitHub User') : 'Guest'}
             </p>
           )}
           <LogoutButton />

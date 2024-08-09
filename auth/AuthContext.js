@@ -1,60 +1,43 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../firebase/firebaseConfig'; 
-import { onAuthStateChanged, signOut,GithubAuthProvider ,signInWithPopup} from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '../firebase/firebaseConfig';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        setUser({
-          type: 'github',
-          name: firebaseUser.displayName,
-          email: firebaseUser.email,
-        });
-        localStorage.setItem('guest', 'false');
-      } else if (localStorage.getItem('guest') === 'true') {
-        setUser({ type: 'guest' });
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser({ uid: user.uid, email: user.email, name: user.displayName, type: 'github' });
       } else {
-        setUser(null);
+        const isGuest = localStorage.getItem('guest') === 'true';
+        if (isGuest) {
+          setUser({ type: 'guest' });
+        } else {
+          setUser(null);
+        }
       }
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
-  const handleGithubLogin = async () => {
-    const provider = new GithubAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      console.log('Sign-in successful');
-      router.push('/');
-    } catch (error) {
-      console.error("Error during GitHub sign-in:", error);
-    }
-  };
-
-  const logout = () => {
-    if (auth.currentUser) {
-      signOut(auth);
-    }
+  const logout = async () => {
     localStorage.removeItem('guest');
+    await signOut(auth);
     setUser(null);
-    router.push('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout, handleGithubLogin, loading }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
